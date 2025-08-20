@@ -6,5 +6,5 @@ and some from
 [brilliant-cv](https://typst.app/universe/package/brilliant-cv).
 
 <div align="center">
-  <img src="example/macchiato.png" alt="Example of a CV with the macchiato theme" width="450"/>
+  <img src="example/example.png" width="450"/>
 </div>

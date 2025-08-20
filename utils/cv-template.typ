@@ -11,11 +11,11 @@
 #let accent = data.accent
 
 #let palette = flavour.colors
-#let colour-darknight = palette.text.rgb // rgb("#131A28")
-#let colour-darkgrey = palette.subtext0.rgb // rgb("#333333")
-#let colour-grey = palette.subtext1.rgb // rgb("#5d5d5d")
-#let default-accent-colour = palette.at(accent).rgb // rgb("#262F99")
-#let default-location-colour = palette.subtext0.rgb //rgb("#333333")
+#let colour-title = palette.text.rgb
+#let colour-subtitle = palette.subtext1.rgb
+#let colour-text = palette.text.rgb
+#let default-accent-colour = palette.at(accent).rgb
+#let default-location-colour = yellow //palette.subtext0.rgb
 
 // const font
 #let font = data.text-font
@@ -82,7 +82,7 @@
 }
 
 #let __resume_footer(author, language, date, use-smallcaps: true) = {
-  set text(fill: gray, size: 8pt)
+  set text(fill: colour-text, size: 8pt)
   __justify_align[
     #__apply_smallcaps(date, use-smallcaps)
   ][
@@ -110,7 +110,7 @@
   set box(height: 11pt)
 
   align(right + horizon)[
-    #fa-icon("github", fill: colour-darkgrey) #link(
+    #fa-icon("github", fill: default-accent-colour) #link(
       "https://github.com/" + github-path,
       github-path,
     )
@@ -126,7 +126,7 @@
     #__justify_align[
       == #primary
     ][
-      #set text(size: 11pt, weight: "medium")
+      #set text(size: 11pt, weight: "medium", fill: colour-title)
       #secondary
     ]
   ]
@@ -137,9 +137,10 @@
 /// - secondary (content): The secondary section of the header
 #let secondary-justified-header(primary, secondary) = {
   __justify_align[
+    #set text(fill: colour-subtitle)
     === #primary
   ][
-    #set text(weight: "light", size: 9pt)
+    #set text(weight: "light", size: 9pt, fill: colour-subtitle)
     #secondary
   ]
 }
@@ -207,7 +208,7 @@
     font: font,
     lang: language,
     size: 11pt,
-    fill: colour-darkgrey,
+    fill: colour-text,
     fallback: true,
   )
 
@@ -241,14 +242,14 @@
     #let color = if colored-headers {
       accent-color
     } else {
-      colour-darkgrey
+      colour-title
     }
     #text(fill: color, weight: "bold")[#__apply_smallcaps(it.body, use-smallcaps)]
-    #box(width: 1fr, line(length: 100%, stroke: colour-darknight))
+    #box(width: 1fr, line(length: 100%, stroke: colour-title))
   ]
 
   show heading.where(level: 2): it => {
-    set text(colour-darkgrey, size: 12pt, style: "normal", weight: "bold")
+    set text(colour-subtitle, size: 12pt, style: "normal", weight: "bold")
     it.body
   }
 
@@ -263,7 +264,7 @@
         #block[
           #set text(size: 32pt, style: "normal", font: header-font)
           #text(accent-color, weight: "thin")[#author.firstname]
-          #text(weight: "bold")[#author.lastname]
+          #text(colour-subtitle, weight: "bold")[#author.lastname]
         ]
       ]
     ]
@@ -359,7 +360,7 @@
               #if ("text" in item) [
                 #separator
                 #if ("icon" in item) [
-                  #box(fa-icon(item.icon, fill: colour-darknight))
+                  #box(fa-icon(item.icon, fill: icon-colour))
                 ]
                 #box[
                   #if ("link" in item) [
@@ -412,7 +413,7 @@
 /// This formats the item for the resume entries. Typically your body would be a bullet list of items. Could be your responsibilities at a company or your academic achievements in an educational background section.
 /// - body (content): The body of the resume entry
 #let resume-item(body) = {
-  set text(size: 10pt, style: "normal", weight: "light", fill: colour-darknight)
+  set text(size: 10pt, style: "normal", weight: "light", fill: colour-text)
   set block(above: 0.75em, below: 1.25em)
   set par(leading: 0.65em)
   block(above: 0.5em)[

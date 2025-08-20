@@ -98,6 +98,7 @@ A highly motivated and independent feline with over 7 years of experience in nap
   title: "Kitten Academy",
   date: "Class of 2018",
   location: "Sunny Windowsill",
+  description: "Bachelor of Purrs and Naps with a minor in Human Training.",
 )
 
 #resume-item[
