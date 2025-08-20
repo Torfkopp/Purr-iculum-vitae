@@ -1,28 +1,28 @@
-#import "@preview/fontawesome:0.5.0": *
-#import "@preview/linguify:0.4.2": *
-#import "@preview/catppuccin:1.0.0": catppuccin, flavors, get-flavor
-#import "utils/injection.typ": inject
+#import "@preview/fontawesome:0.6.0": *
+#import "@preview/catppuccin:1.0.0": catppuccin, get-flavor as get-flavour
+#import "./injection.typ": inject
 
-#let data = toml("./data.toml")
+#let data = toml("../settings.toml")
 #let language = data.language
+#let curriculum-vitae = data.curriculum-vitae
 
 // const color
-#let flavor = get-flavor(data.theme)
+#let flavour = get-flavour(data.theme)
 #let accent = data.accent
 
-#let palette = flavor.colors
-#let color-darknight = palette.text.rgb // rgb("#131A28")
-#let color-darkgray = palette.subtext0.rgb // rgb("#333333")
-#let color-gray = palette.subtext1.rgb // rgb("#5d5d5d")
-#let default-accent-color = palette.at(accent).rgb // rgb("#262F99")
-#let default-location-color = palette.subtext0.rgb //rgb("#333333")
+#let palette = flavour.colors
+#let colour-darknight = palette.text.rgb // rgb("#131A28")
+#let colour-darkgrey = palette.subtext0.rgb // rgb("#333333")
+#let colour-grey = palette.subtext1.rgb // rgb("#5d5d5d")
+#let default-accent-colour = palette.at(accent).rgb // rgb("#262F99")
+#let default-location-colour = palette.subtext0.rgb //rgb("#333333")
 
 // const font
 #let font = data.text-font
 #let header-font = data.header-font
 
 // const icons
-#let icon-colour = default-accent-color
+#let icon-colour = default-accent-colour
 #let linkedin-icon = box(fa-icon("linkedin", fill: icon-colour))
 #let github-icon = box(fa-icon("github", fill: icon-colour))
 #let gitlab-icon = box(fa-icon("gitlab", fill: icon-colour))
@@ -41,14 +41,6 @@
 /// 
 
 // Common helper functions
-#let __format_author_name(author, language) = {
-  if language == "zh" or language == "ja" {
-    str(author.firstname) + str(author.lastname)
-  } else {
-    str(author.firstname) + " " + str(author.lastname)
-  }
-}
-
 #let __apply_smallcaps(content, use-smallcaps) = {
   if use-smallcaps {
     smallcaps(content)
@@ -89,48 +81,24 @@
   ]
 }
 
-#let __coverletter_footer(
-  author,
-  language,
-  date,
-  lang_data,
-  use-smallcaps: true,
-) = {
+#let __resume_footer(author, language, date, use-smallcaps: true) = {
   set text(fill: gray, size: 8pt)
-  __justify_align_3[
+  __justify_align[
     #__apply_smallcaps(date, use-smallcaps)
   ][
     #__apply_smallcaps(
       {
-        let name = __format_author_name(author, language)
-        name + " · " + linguify("cover-letter", from: lang_data)
+        let name = str(author.firstname + " " + author.lastname)
+        name + " · " + curriculum-vitae
       },
       use-smallcaps,
     )
-  ][
-    #context {
-      counter(page).display()
-    }
   ]
-}
-
-#let __resume_footer(author, language, lang_data, date, use-smallcaps: true) = {
-  set text(fill: gray, size: 8pt)
-  __justify_align_3[
-    #__apply_smallcaps(date, use-smallcaps)
-  ][
-    #__apply_smallcaps(
-      {
-        let name = __format_author_name(author, language)
-        name + " · " + linguify("resume", from: lang_data)
-      },
-      use-smallcaps,
-    )
-  ][
-    #context {
-      counter(page).display()
-    }
-  ]
+  // [
+  //   #context {
+  //     counter(page).display()
+  //   }
+  // ]
 }
 
 /// Show a link with an icon, specifically for Github projects
@@ -142,25 +110,11 @@
   set box(height: 11pt)
 
   align(right + horizon)[
-    #fa-icon("github", fill: color-darkgray) #link(
+    #fa-icon("github", fill: colour-darkgrey) #link(
       "https://github.com/" + github-path,
       github-path,
     )
   ]
-}
-
-/// Right section for the justified headers
-/// - body (content): The body of the right header
-#let secondary-right-header(body) = {
-  set text(size: 11pt, weight: "medium")
-  body
-}
-
-/// Right section of a tertiaty headers.
-/// - body (content): The body of the right header
-#let tertiary-right-header(body) = {
-  set text(weight: "light", size: 9pt)
-  body
 }
 
 /// Justified header that takes a primary section and a secondary section. The primary section is on the left and the secondary section is on the right.
@@ -172,7 +126,8 @@
     #__justify_align[
       == #primary
     ][
-      #secondary-right-header[#secondary]
+      #set text(size: 11pt, weight: "medium")
+      #secondary
     ]
   ]
 }
@@ -184,7 +139,8 @@
   __justify_align[
     === #primary
   ][
-    #tertiary-right-header[#secondary]
+    #set text(weight: "light", size: 9pt)
+    #secondary
   ]
 }
 /// --- End of Helpers
@@ -208,7 +164,7 @@
 /// - body (content): The body of the resume
 /// -> none
 #let resume(
-  accent-color: default-accent-color,
+  accent-color: default-accent-colour,
   date: datetime.today().display("[day]. [month repr:long] [year]"),
   use-smallcaps: true,
   show-address-icon: true,
@@ -222,15 +178,17 @@
 ) = {
   let author = data.author
 
-  show: catppuccin.with(flavor)
+  show: catppuccin.with(flavour)
   if type(accent-color) == str {
     accent-color = rgb(accent-color)
   }
 
-  let lang_data = toml("lang.toml")
+  // Set the colour of (enum) lists to accent colour
+  set enum(numbering: n => [#text(fill: default-accent-colour, numbering("1.", n))])
+  set list( marker: n => [#text(fill: default-accent-colour, "•")])
 
   let desc = if description == none {
-    lflib._linguify("resume", lang: language, from: lang_data).ok + " " + author.firstname + " " + author.lastname
+    curriculum-vitae + " " + author.firstname + " " + author.lastname
   } else {
     description
   }
@@ -238,7 +196,7 @@
   show: body => context {
     set document(
       author: author.firstname + " " + author.lastname,
-      title: lflib._linguify("resume", lang: language, from: lang_data).ok,
+      title: curriculum-vitae,
       description: desc,
       keywords: keywords,
     )
@@ -249,7 +207,7 @@
     font: font,
     lang: language,
     size: 11pt,
-    fill: color-darkgray,
+    fill: colour-darkgrey,
     fallback: true,
   )
 
@@ -259,7 +217,6 @@
     footer: if show-footer [#__resume_footer(
         author,
         language,
-        lang_data,
         date,
         use-smallcaps: use-smallcaps,
       )] else [],
@@ -284,14 +241,14 @@
     #let color = if colored-headers {
       accent-color
     } else {
-      color-darkgray
+      colour-darkgrey
     }
     #text(fill: color, weight: "bold")[#__apply_smallcaps(it.body, use-smallcaps)]
-    #box(width: 1fr, line(length: 100%, stroke: color-darknight))
+    #box(width: 1fr, line(length: 100%, stroke: colour-darknight))
   ]
 
   show heading.where(level: 2): it => {
-    set text(color-darkgray, size: 12pt, style: "normal", weight: "bold")
+    set text(colour-darkgrey, size: 12pt, style: "normal", weight: "bold")
     it.body
   }
 
@@ -305,12 +262,8 @@
       #pad(bottom: 5pt)[
         #block[
           #set text(size: 32pt, style: "normal", font: header-font)
-          #if language == "zh" or language == "ja" [
-            #text(accent-color, weight: "thin")[#author.firstname]#text(weight: "bold")[#author.lastname]
-          ] else [
-            #text(accent-color, weight: "thin")[#author.firstname]
-            #text(weight: "bold")[#author.lastname]
-          ]
+          #text(accent-color, weight: "thin")[#author.firstname]
+          #text(weight: "bold")[#author.lastname]
         ]
       ]
     ]
@@ -350,7 +303,8 @@
       #block[
         #align(horizon)[
           #if ("birth" in author) [
-            #birth-icon~#box[#text(author.birth)]
+            #let birthdate = toml(bytes("date = " + author.birth)).date
+            #birth-icon~#box[#text(birthdate.display("[day]. [month repr:long] [year]"))]
             #separator
           ]
           #if ("phone" in author) [
@@ -364,6 +318,7 @@
             #separator
             #homepage-icon~#box[#link(author.homepage)[#author.homepage]]
           ]
+          // Press Enter for Linebreak
           #if ("github" in author) [
             #separator
             #github-icon~#box[#link("https://github.com/" + author.github)[#author.github]]
@@ -404,7 +359,7 @@
               #if ("text" in item) [
                 #separator
                 #if ("icon" in item) [
-                  #box(fa-icon(item.icon, fill: color-darknight))
+                  #box(fa-icon(item.icon, fill: colour-darknight))
                 ]
                 #box[
                   #if ("link" in item) [
@@ -439,7 +394,7 @@
           radius: 2cm,
           width: 4cm,
           height: 4cm,
-          image(author.profile-picture),
+          image("../assets/" + author.profile-picture),
         )
       ],
     )
@@ -457,7 +412,7 @@
 /// This formats the item for the resume entries. Typically your body would be a bullet list of items. Could be your responsibilities at a company or your academic achievements in an educational background section.
 /// - body (content): The body of the resume entry
 #let resume-item(body) = {
-  set text(size: 10pt, style: "normal", weight: "light", fill: color-darknight)
+  set text(size: 10pt, style: "normal", weight: "light", fill: colour-darknight)
   set block(above: 0.75em, below: 1.25em)
   set par(leading: 0.65em)
   block(above: 0.5em)[
@@ -479,8 +434,8 @@
   date: "",
   description: "",
   title-link: none,
-  accent-color: default-accent-color,
-  location-color: default-location-color,
+  accent-color: default-accent-colour,
+  location-color: default-location-colour,
 ) = {
   let title-content
   if type(title-link) == str {

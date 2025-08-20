@@ -1,0 +1,33 @@
+language = "en"
+curriculum-vitae = "Purr-iculum Vitae"
+theme = "macchiato" # Options: latte, frappe, macchiato, mocha
+# Options: rosewater, flamingo, pink, mauve, red, maroon, peach, yellow, 
+# green, teal, blue, sky, sapphire, lavender
+accent = "yellow" 
+text-font = "Arial"
+header-font = "Times New Roman"
+
+[author]
+    firstname = "Mr. Whiskers"
+    lastname = "Purrington"
+    email = "meow@purrmail.com"
+    profile-picture = "profile.png" # False if not wanted
+    homepage = "meow.cat"
+
+    website = "meow.cat/website"
+    linkedin = "LinkedInCatname"
+    bitbucket = "BitbucketCatname"
+    twitter = "TwitterCatname"
+    google-scholar = "GoogleScholarCatname"
+    orcid = "0000-0000-0000-0000"
+
+    phone = "unavailable (try treats)"
+    github = "GithubCatname"
+    gitlab = "GitlabCatname"
+    birth = "2018-04-01"
+    address = "Sunny Windowsill, Apartment 3B"
+    positions = [
+      "Domestic Cat",
+      "Napper", 
+      "Meow-sician",
+    ]
