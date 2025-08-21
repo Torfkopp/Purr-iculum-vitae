@@ -1,9 +1,10 @@
 language = "en"
 curriculum-vitae = "Purr-iculum Vitae"
-theme = "macchiato" # Options: latte, frappe, macchiato, mocha
+coverletter = "Cover Letter"
+theme = "latte" # Options: latte, frappe, macchiato, mocha
 # Options: rosewater, flamingo, pink, mauve, red, maroon, peach, yellow, 
 # green, teal, blue, sky, sapphire, lavender
-accent = "yellow" 
+accent = "green" 
 text-font = "Arial"
 header-font = "Times New Roman"
 
